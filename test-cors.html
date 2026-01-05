@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test CORS ADOUAS-MC</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .test { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test CORS ADOUAS-MC</h1>
+        
+        <div class="test">
+            <h3>Test de santé de l'API</h3>
+            <button onclick="testHealth()">Tester /api/health</button>
+            <div id="health-result"></div>
+        </div>
+
+        <div class="test">
+            <h3>Test CORS simple</h3>
+            <button onclick="testCors()">Tester /api/test-cors</button>
+            <div id="cors-result"></div>
+        </div>
+
+        <div class="test">
+            <h3>Test de login</h3>
+            <button onclick="testLogin()">Tester /api/login</button>
+            <div id="login-result"></div>
+        </div>
+    </div>
+
+    <script>
+        async function testHealth() {
+            try {
+                const response = await fetch('http://localhost:5000/api/health', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                document.getElementById('health-result').innerHTML = 
+                    `<pre class="success">✅ Succès: ${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                document.getElementById('health-result').innerHTML = 
+                    `<pre class="error">❌ Erreur: ${error.message}</pre>`;
+            }
+        }
+
+        async function testCors() {
+            try {
+                const response = await fetch('http://localhost:5000/api/test-cors', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                document.getElementById('cors-result').innerHTML = 
+                    `<pre class="success">✅ CORS fonctionne: ${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                document.getElementById('cors-result').innerHTML = 
+                    `<pre class="error">❌ Erreur CORS: ${error.message}</pre>`;
+            }
+        }
+
+        async function testLogin() {
+            try {
+                const response = await fetch('http://localhost:5000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@adouas-mc.com',
+                        password: 'admin123'
+                    })
+                });
+                
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById('login-result').innerHTML = 
+                        `<pre class="success">✅ Login réussi: ${JSON.stringify(result, null, 2)}</pre>`;
+                } else {
+                    document.getElementById('login-result').innerHTML = 
+                        `<pre class="error">❌ Erreur login: ${JSON.stringify(result, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                document.getElementById('login-result').innerHTML = 
+                    `<pre class="error">❌ Erreur: ${error.message}</pre>`;
+            }
+        }
+    </script>
+</body>
+</html>
